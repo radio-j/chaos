@@ -1,61 +1,84 @@
-use yew::prelude::*;
+//use yew::prelude::*;
+use yew::{classes, html, Component, Context, Html};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::window;
+use yew::prelude::*;
 
-#[wasm_bindgen(module = "/public/glue.js")]
-extern "C" {
-    #[wasm_bindgen(js_name = invokeHello, catch)]
-    pub async fn hello(name: String) -> Result<JsValue, JsValue>;
+pub enum Msg {
+    Add,
+    Remove,
+    Home,
+    Details,
+//    Login,
+//    LogOut,
+}
+
+pub struct App {
+  projects: Vec<Html>,
+}
+
+impl App {
+    pub fn add(&mut self) {
+
+    }
+
+    pub fn delete(& mut self) {
+
+    }
+}
+
+impl Component for App {
+    type Message = Msg;
+    type Properties = ();
+
+    fn create(ctx: &Context<Self>) -> Self {
+        Self {
+           projects: Vec::new(),
+        }
+    }
+
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+        match msg {
+            Msg::Add => {
+                self.projects.push(html! {
+                    <>
+                    <div>
+                    <h2>{"Hello!"}</h2>
+                    </div>
+                    </>
+                });
+                true
+            }
+            Msg::Remove => {
+                true
+            }
+            Msg::Home => {true}
+            Msg::Details => {true},
+            _ => {true},
+        }
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        html! {
+            <>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+            <div class="topnav">
+              <a class="active" href="#home">{"Chaos"}</a>
+              <div id={"myLinks"}>
+                <a href="#add">{"Add"}</a>
+                <a href="#review">{"Review"}</a>
+              </div>
+            </div>
+            <div class="option-buttons">
+              <button class="option-button" onclick={ctx.link().callback(|_| Msg::Add)}>{"Add"}</button>
+              <button class="option-button" onclick={ctx.link().callback(|_| Msg::Remove)}>{"Remove"}</button>
+            </div>
+            </>
+        }
+    }
 }
 
 fn main() {
     yew::start_app::<App>();
-}
-
-
-#[function_component(App)]
-pub fn app() -> Html {
-    let welcome = use_state_eq(|| "".to_string());
-    let name = use_state_eq(|| "World".to_string());
-    {
-      let welcome = welcome.clone();
-      use_effect_with_deps(
-          move |name| {
-              update_welcome_message(welcome, name.clone());
-              || ()
-          },
-          (*name).clone(),
-      );
-    }
-
-    let message = (*welcome).clone();
-
-    html! {
-        <>
-        //<div style="background-color:grey;color:white;margin:20px;padding:20px;border-radius:25px;">
-        <div>
-            <h2 class={"example"}>{message}</h2>
-        </div>
-        </>
-    }
-}
-
-fn update_welcome_message(welcome: UseStateHandle<String>, name: String) {
-    spawn_local(async move {
-        // This will call our glue code all the way through to the tauri
-        // back-end command and return the `Result<String, String>` as
-        // `Result<JsValue, JsValue>`.
-        match hello(name).await {
-            Ok(message) => {
-                welcome.set(message.as_string().unwrap());
-            }
-            Err(e) => {
-                let window = window().unwrap();
-                window
-                    .alert_with_message(&format!("Error: {:?}", e))
-                    .unwrap();
-            }
-        }
-    });
 }

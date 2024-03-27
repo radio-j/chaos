@@ -15,7 +15,7 @@ pub enum Msg {
 }
 
 pub struct App {
-  projects: Vec<Html>,
+  projects: Vec<String>,
 }
 
 impl App {
@@ -41,13 +41,7 @@ impl Component for App {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::Add => {
-                self.projects.push(html! {
-                    <>
-                    <div>
-                    <h2>{"Hello!"}</h2>
-                    </div>
-                    </>
-                });
+                self.projects.push("Example".to_string());
                 true
             }
             Msg::Remove => {
@@ -60,6 +54,7 @@ impl Component for App {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        // generate the html list of projects here, should eliminate the move issue
         html! {
             <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -73,6 +68,12 @@ impl Component for App {
             <div class="option-buttons">
               <button class="option-button" onclick={ctx.link().callback(|_| Msg::Add)}>{"Add"}</button>
               <button class="option-button" onclick={ctx.link().callback(|_| Msg::Remove)}>{"Remove"}</button>
+            </div>
+            <div> {
+              self.projects.into_iter().map(|name| {
+                  html! {<div><h2 class={"example"}>{name}</h2></div>}
+              }).collect::<Html>()
+            }
             </div>
             </>
         }

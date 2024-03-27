@@ -61,3 +61,11 @@ body {
   background-color: #04AA6D;
   color: white;
 }
+
+.option-button {
+  background-color:grey;
+  color:white;
+  margin:20px;
+  padding:14px;
+  border-radius:25px;
+}
